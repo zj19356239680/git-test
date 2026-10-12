@@ -43,6 +43,17 @@ class TaskManager:
         self._save(tasks)
         return task
 
+    def rename_task(self, task_id: int, title: str) -> Task:
+        clean_title = title.strip()
+        if not clean_title:
+            raise ValueError("Task title cannot be empty")
+
+        tasks = self._load()
+        task = self._find(tasks, task_id)
+        task.title = clean_title
+        self._save(tasks)
+        return task
+
     def remove_task(self, task_id: int) -> Task:
         tasks = self._load()
         task = self._find(tasks, task_id)

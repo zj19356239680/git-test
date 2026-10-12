@@ -37,6 +37,22 @@ class TaskManagerTest(unittest.TestCase):
         self.assertEqual(removed, task)
         self.assertEqual(self.manager.list_tasks(), [])
 
+    def test_rename_task(self) -> None:
+        task = self.manager.add_task("Draft release notes")
+
+        renamed = self.manager.rename_task(task.id, "  Publish release notes  ")
+
+        self.assertEqual(renamed.title, "Publish release notes")
+        self.assertEqual(self.manager.list_tasks(), [renamed])
+
+    def test_reject_empty_renamed_title(self) -> None:
+        task = self.manager.add_task("Keep this title")
+
+        with self.assertRaisesRegex(ValueError, "cannot be empty"):
+            self.manager.rename_task(task.id, "   ")
+
+        self.assertEqual(self.manager.list_tasks(), [task])
+
     def test_reject_empty_title(self) -> None:
         with self.assertRaisesRegex(ValueError, "cannot be empty"):
             self.manager.add_task("   ")

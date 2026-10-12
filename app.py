@@ -24,6 +24,10 @@ def build_parser() -> argparse.ArgumentParser:
     done_parser = commands.add_parser("done", help="Mark a task as completed")
     done_parser.add_argument("id", type=int, help="Task ID")
 
+    rename_parser = commands.add_parser("rename", help="Rename a task")
+    rename_parser.add_argument("id", type=int, help="Task ID")
+    rename_parser.add_argument("title", help="New task title")
+
     remove_parser = commands.add_parser("remove", help="Remove a task")
     remove_parser.add_argument("id", type=int, help="Task ID")
 
@@ -52,6 +56,9 @@ def main() -> int:
         elif args.command == "done":
             task = manager.complete_task(args.id)
             print(f"Completed: {format_task(task)}")
+        elif args.command == "rename":
+            task = manager.rename_task(args.id, args.title)
+            print(f"Renamed: {format_task(task)}")
         elif args.command == "remove":
             task = manager.remove_task(args.id)
             print(f"Removed: {format_task(task)}")
