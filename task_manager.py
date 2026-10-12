@@ -25,10 +25,7 @@ class TaskManager:
         return [task for task in tasks if not task.completed]
 
     def add_task(self, title: str) -> Task:
-        clean_title = title.strip()
-        if not clean_title:
-            raise ValueError("Task title cannot be empty")
-
+        clean_title = self._clean_title(title)
         tasks = self._load()
         next_id = max((task.id for task in tasks), default=0) + 1
         task = Task(id=next_id, title=clean_title)
@@ -40,6 +37,14 @@ class TaskManager:
         tasks = self._load()
         task = self._find(tasks, task_id)
         task.completed = True
+        self._save(tasks)
+        return task
+
+    def rename_task(self, task_id: int, title: str) -> Task:
+        clean_title = self._clean_title(title)
+        tasks = self._load()
+        task = self._find(tasks, task_id)
+        task.title = clean_title
         self._save(tasks)
         return task
 
@@ -62,6 +67,13 @@ class TaskManager:
             json.dumps([asdict(task) for task in tasks], ensure_ascii=False, indent=2),
             encoding="utf-8",
         )
+
+    @staticmethod
+    def _clean_title(title: str) -> str:
+        clean_title = title.strip()
+        if not clean_title:
+            raise ValueError("Task title cannot be empty")
+        return clean_title
 
     @staticmethod
     def _find(tasks: list[Task], task_id: int) -> Task:
